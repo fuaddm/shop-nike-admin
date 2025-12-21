@@ -79,7 +79,7 @@ export function AddNewProduct({ data }: { data: any }) {
         <DialogTrigger asChild>
           <Button>Add new Product</Button>
         </DialogTrigger>
-        <DialogContent className="max-h-screen overflow-y-scroll sm:max-w-[800px]">
+        <DialogContent className="minimalist-scrollbar max-h-screen overflow-y-scroll sm:max-w-[800px]">
           <DialogHeader>
             <DialogTitle>Product</DialogTitle>
             <DialogDescription>Add new "Product"</DialogDescription>

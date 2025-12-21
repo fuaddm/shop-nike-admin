@@ -34,7 +34,8 @@ export const columns: ColumnDef<MainCategory>[] = [
 ];
 
 export async function clientLoader() {
-  const resp = await mainAPI.get('/user/main-categories');
+  const token = sessionStorage.getItem('token');
+  const resp = await mainAPI.get('/user/main-categories', { headers: { token } });
 
   if (resp.statusText === 'OK') return resp.data.data as MainCategory;
 
@@ -46,9 +47,14 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const actionMethod = formData.get('actionMethod');
   const name = formData.get('name');
   const id = formData.get('id');
+  const token = sessionStorage.getItem('token');
 
-  if (actionMethod === 'add') await mainAPI.post(`/admin/add-main-category?mainCategoryName=${name}`, null);
-  if (actionMethod === 'remove') await mainAPI.patch(`/admin/delete-main-category?mainCategoryId=${id}`, null);
+  if (actionMethod === 'add')
+    await mainAPI.post(`/admin/add-main-category?mainCategoryName=${name}`, null, { headers: { token } });
+  if (actionMethod === 'update')
+    await mainAPI.put(`/admin/update-main-category?mainCategoryId=${id}&name=${name}`, null, { headers: { token } });
+  if (actionMethod === 'remove')
+    await mainAPI.patch(`/admin/delete-main-category?mainCategoryId=${id}`, null, { headers: { token } });
 
   return [];
 }

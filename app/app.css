@@ -1,11 +1,12 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
 }
 
 html,
@@ -131,4 +132,34 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/*
+ * Minimalist Scrollbar CSS
+ * Uses proprietary ::-webkit-scrollbar pseudo-elements for styling,
+ * providing the best cross-browser (Chrome, Safari, newer Edge, Opera) support currently available.
+ * These styles should be applied to the element containing scrollable content (e.g., body, div).
+ */
+
+/* 1. Define the overall scrollbar area width/height */
+.minimalist-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Vertical scrollbar width */
+  height: 8px; /* Horizontal scrollbar height */
+}
+
+/* 2. Style the track (the area behind the thumb) */
+.minimalist-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Very light grey track */
+  border-radius: 10px;
+}
+
+/* 3. Style the thumb (the draggable element) */
+.minimalist-scrollbar::-webkit-scrollbar-thumb {
+  background: #cccccc; /* Light grey thumb */
+  border-radius: 10px;
+}
+
+/* 4. Style the thumb on hover for better UX */
+.minimalist-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8; /* Slightly darker grey on hover */
 }

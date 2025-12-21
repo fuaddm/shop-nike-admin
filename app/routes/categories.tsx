@@ -34,7 +34,12 @@ export const columns: ColumnDef<Category>[] = [
 ];
 
 export async function clientLoader() {
-  const resp = await mainAPI.get('/user/categories');
+  const token = sessionStorage.getItem('token');
+  const resp = await mainAPI.get('/user/categories', {
+    headers: {
+      token,
+    },
+  });
 
   if (resp.statusText === 'OK') return resp.data.data as Category;
 
@@ -46,9 +51,16 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const actionMethod = formData.get('actionMethod');
   const name = formData.get('name');
   const id = formData.get('id');
+  const token = sessionStorage.getItem('token');
 
-  if (actionMethod === 'add') await mainAPI.post(`/admin/add-category?categoryName=${name}`, null);
-  if (actionMethod === 'remove') await mainAPI.patch(`/admin/delete-category?categoryId=${id}`, null);
+  if (actionMethod === 'add')
+    await mainAPI.post(`/admin/add-category?categoryName=${name}`, null, {
+      headers: { token },
+    });
+  if (actionMethod === 'update')
+    await mainAPI.put(`/admin/update-category?categoryId=${id}&name=${name}`, null, { headers: { token } });
+  if (actionMethod === 'remove')
+    await mainAPI.patch(`/admin/delete-category?categoryId=${id}`, null, { headers: { token } });
 
   return [];
 }

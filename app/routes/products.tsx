@@ -7,10 +7,11 @@ import { ProductDataTable } from '~/components/products/ProductDataTable';
 
 export async function clientLoader() {
   try {
-    const subCategoriesResp = await mainAPI.get('/user/sub-categories');
-    const mainCategoriesResp = await mainAPI.get('/user/main-categories');
+    const token = sessionStorage.getItem('token');
+    const subCategoriesResp = await mainAPI.get('/user/sub-categories', { headers: { token } });
+    const mainCategoriesResp = await mainAPI.get('/user/main-categories', { headers: { token } });
     try {
-      const productsResp = await mainAPI.get('/user/products');
+      const productsResp = await mainAPI.get('/user/products', { headers: { token } });
       return [productsResp.data.data, subCategoriesResp.data.data, mainCategoriesResp.data.data];
     } catch {
       return [[], subCategoriesResp.data.data, mainCategoriesResp.data.data];
@@ -25,6 +26,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const actionMethod = formData.get('actionMethod');
   console.log(Array.from(formData.entries()));
   let sizeQuantities = JSON.parse(formData.get('sizeQuantities') as string);
+  const token = sessionStorage.getItem('token');
 
   sizeQuantities = sizeQuantities?.map((sizeQuantity: any) => ({
     size: sizeQuantity.size,
@@ -32,30 +34,40 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }));
 
   if (actionMethod === 'add')
-    await mainAPI.post(`/admin/add-product`, {
-      mainCategoryId: formData.get('mainCategoryId'),
-      subCategoryId: formData.get('subCategoryId'),
-      productName: formData.get('productName'),
-      genderId: formData.get('genderId'),
-      make: formData.get('make'),
-      fabric: formData.get('fabric'),
-      description: formData.get('description'),
-      colorCode: formData.get('colorCode'),
-      price: formData.get('price'),
-      sizeQuantities,
-    });
+    await mainAPI.post(
+      `/admin/add-product`,
+      {
+        mainCategoryId: formData.get('mainCategoryId'),
+        subCategoryId: formData.get('subCategoryId'),
+        productName: formData.get('productName'),
+        genderId: formData.get('genderId'),
+        make: formData.get('make'),
+        fabric: formData.get('fabric'),
+        description: formData.get('description'),
+        colorCode: formData.get('colorCode'),
+        price: formData.get('price'),
+        sizeQuantities,
+      },
+      { headers: { token } }
+    );
   else if (actionMethod === 'add-variation')
-    await mainAPI.post(`/admin/add-product-variations`, {
-      productId: formData.get('productId'),
-      make: formData.get('make'),
-      fabric: formData.get('fabric'),
-      description: formData.get('description'),
-      colorId: formData.get('colorCode'),
-      price: formData.get('price'),
-      sizeQuantities,
-    });
+    await mainAPI.post(
+      `/admin/add-product-variations`,
+      {
+        productId: formData.get('productId'),
+        make: formData.get('make'),
+        fabric: formData.get('fabric'),
+        description: formData.get('description'),
+        colorId: formData.get('colorCode'),
+        price: formData.get('price'),
+        sizeQuantities,
+      },
+      { headers: { token } }
+    );
   else if (actionMethod === 'get-info')
-    return await mainAPI.get(`/user/product-info?variationCode=${formData.get('variationCode')}`);
+    return await mainAPI.get(`/user/product-info?variationCode=${formData.get('variationCode')}`, {
+      headers: { token },
+    });
   else if (actionMethod === 'add-images') {
     const postFormData = new FormData();
     postFormData.append('productVariationId', String(formData.get('productVariationId')));
@@ -69,6 +81,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
       headers: {
         'Content-Type': 'multipart/form-data',
         Accept: 'application/json',
+        token,
       },
     });
   }

@@ -1,19 +1,15 @@
 import * as React from 'react';
 import {
-  IconDashboard,
+  IconDiscount,
+  IconFileTypeHtml,
   IconFolder,
-  IconHelp,
   IconHome,
   IconInnerShadowTop,
-  IconSearch,
-  IconSettings,
   IconTag,
-  IconUser,
   IconUsers,
 } from '@tabler/icons-react';
 
 import { NavMain } from '~/components/nav-main';
-import { NavSecondary } from '~/components/nav-secondary';
 import { NavUser } from '~/components/nav-user';
 import {
   Sidebar,
@@ -24,65 +20,84 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
+import { ShoppingCart } from 'lucide-react';
+import { mainAPI } from '~/api/config';
 
 const data = {
-  user: {
-    name: 'omar',
-    email: 'omar@gmail.com',
-    avatar: '',
-  },
   navMain: [
     {
       title: 'Home',
-      url: '/',
+      url: '/app',
       icon: IconHome,
     },
     {
       title: 'Main Categories',
-      url: '/main-categories',
+      url: '/app/main-categories',
       icon: IconFolder,
     },
     {
       title: 'Categories',
-      url: '/categories',
+      url: '/app/categories',
       icon: IconFolder,
     },
     {
       title: 'Sub Categories',
-      url: '/sub-categories',
+      url: '/app/sub-categories',
       icon: IconFolder,
     },
     {
       title: 'Hierarchy Categories',
-      url: '/hierarchy-categories',
+      url: '/app/hierarchy-categories',
       icon: IconFolder,
     },
     {
+      title: 'Contents',
+      url: '/app/contents',
+      icon: IconFileTypeHtml,
+    },
+    {
       title: 'Products',
-      url: '/products',
+      url: '/app/products',
       icon: IconTag,
     },
     {
       title: 'Users',
-      url: '/users',
+      url: '/app/users',
       icon: IconUsers,
     },
-  ],
-  navSecondary: [
     {
-      title: 'Settings',
-      url: '#',
-      icon: IconSettings,
+      title: 'Orders',
+      url: '/app/orders',
+      icon: ShoppingCart,
     },
     {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
+      title: 'Promocodes',
+      url: '/app/promocodes',
+      icon: IconDiscount,
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [userData, setUserData] = React.useState<{ name: string | null; email: string; surname: string | null } | null>(
+    null
+  );
+
+  React.useEffect(() => {
+    async function getUserData() {
+      const token = sessionStorage.getItem('token');
+      const resp = await mainAPI.get('/user/info', {
+        headers: {
+          token,
+        },
+      });
+      if (resp.data.data) {
+        setUserData(resp.data.data);
+      }
+    }
+    getUserData();
+  }, []);
+
   return (
     <Sidebar
       collapsible="offcanvas"
@@ -97,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Admin Page.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -105,13 +120,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary
-          items={data.navSecondary}
-          className="mt-auto"
-        />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {userData && (
+          <NavUser
+            user={{
+              name: '',
+              email: userData.email,
+              avatar: '',
+            }}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

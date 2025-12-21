@@ -294,14 +294,19 @@ export function ActionsProduct({ row }: { row: Row<Product> }) {
                 </div>
                 <div>
                   <span className="font-semibold">Images: </span>
-                  <div className="grid h-[80px] grid-cols-5 gap-3">
+                  <div className="mb-10 grid grid-cols-5 gap-3">
                     {details.images?.map((image: any) => {
                       return (
-                        <img
-                          className="h-full w-full object-cover"
-                          src={image.url}
-                          alt=""
-                        />
+                        <div
+                          key={image.url}
+                          className="aspect-square w-full"
+                        >
+                          <img
+                            className="h-full w-full object-cover"
+                            src={image.url}
+                            alt=""
+                          />
+                        </div>
                       );
                     })}
                   </div>

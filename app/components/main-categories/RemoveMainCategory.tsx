@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { Input } from '~/components/ui/input';
 import type { MainCategory } from '~/routes/main-categories';
 
 export function RemoveMainCategory({ row }: { row: Row<MainCategory> }) {
@@ -34,9 +35,51 @@ export function RemoveMainCategory({ row }: { row: Row<MainCategory> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Go to categories</DropdownMenuItem>
         <Dialog>
-          <form>
+          <div>
+            <DialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Update</DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Update "{row.getValue('name')}" main category</DialogTitle>
+                <DialogDescription></DialogDescription>
+              </DialogHeader>
+              <Form
+                method="POST"
+                navigate={false}
+                className=""
+              >
+                <div className="mb-3 grid gap-4">
+                  <Input
+                    placeholder="New Name"
+                    name="name"
+                  />
+                </div>
+                <DialogFooter className="flex items-center gap-3">
+                  <input
+                    type="hidden"
+                    name="actionMethod"
+                    value="update"
+                  />
+                  <input
+                    type="hidden"
+                    name="id"
+                    value={row.getValue('id')}
+                  />
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button type="submit">Update</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </Form>
+            </DialogContent>
+          </div>
+        </Dialog>
+        <Dialog>
+          <div>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => e.preventDefault()}
@@ -76,7 +119,7 @@ export function RemoveMainCategory({ row }: { row: Row<MainCategory> }) {
                 </Form>
               </DialogFooter>
             </DialogContent>
-          </form>
+          </div>
         </Dialog>
       </DropdownMenuContent>
     </DropdownMenu>

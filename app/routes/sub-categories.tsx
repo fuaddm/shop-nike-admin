@@ -37,9 +37,10 @@ export const columns: ColumnDef<SubCategory>[] = [
 ];
 
 export async function clientLoader() {
-  const resp = await mainAPI.get('/user/sub-categories');
-  const categoriesResp = await mainAPI.get('/user/categories');
-  const mainCategoriesResp = await mainAPI.get('/user/main-categories');
+  const token = sessionStorage.getItem('token');
+  const resp = await mainAPI.get('/user/sub-categories', { headers: { token } });
+  const categoriesResp = await mainAPI.get('/user/categories', { headers: { token } });
+  const mainCategoriesResp = await mainAPI.get('/user/main-categories', { headers: { token } });
 
   if (resp.statusText === 'OK') return [resp.data.data, categoriesResp.data.data, mainCategoriesResp.data.data];
 
@@ -53,10 +54,16 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const categoryId = Number(formData.get('category') ?? '');
   const id = formData.get('id');
   const mainCategories = String(formData.get('main-categories'));
+  const token = sessionStorage.getItem('token');
 
   if (actionMethod === 'add')
-    await mainAPI.post(`/admin/add-sub-category?categoryId=${categoryId}&subCategoryName=${name}`, null);
-  if (actionMethod === 'remove') await mainAPI.patch(`/admin/delete-sub-category?subCategoryId=${id}`, null);
+    await mainAPI.post(`/admin/add-sub-category?categoryId=${categoryId}&subCategoryName=${name}`, null, {
+      headers: { token },
+    });
+  if (actionMethod === 'update')
+    await mainAPI.put(`/admin/update-sub-category?subCategoryId=${id}&name=${name}`, null, { headers: { token } });
+  if (actionMethod === 'remove')
+    await mainAPI.patch(`/admin/delete-sub-category?subCategoryId=${id}`, null, { headers: { token } });
   if (actionMethod === 'create-hierarchy') {
     const mainCategoryIdsAsParams = mainCategories
       .split(',')
@@ -65,7 +72,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
       })
       .join('&');
 
-    await mainAPI.post(`/admin/create-hierarchy?subCategoryIds=${id}&${mainCategoryIdsAsParams}`, null);
+    await mainAPI.post(`/admin/create-hierarchy?subCategoryIds=${id}&${mainCategoryIdsAsParams}`, null, {
+      headers: { token },
+    });
   }
 
   return [];

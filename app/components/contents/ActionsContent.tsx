@@ -1,6 +1,6 @@
 import type { Row } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
-import { Form } from 'react-router';
+import { Form, Link } from 'react-router';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -19,10 +19,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { Input } from '~/components/ui/input';
-import type { Category } from '~/routes/categories';
 
-export function RemoveCategory({ row }: { row: Row<Category> }) {
+export function ActionsContent({ row }: { row: Row<any> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,51 +33,11 @@ export function RemoveCategory({ row }: { row: Row<Category> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem asChild>
+          <Link to={`/app/edit-content/${row.getValue('name')}`}>Edit</Link>
+        </DropdownMenuItem>
         <Dialog>
           <div>
-            <DialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Update</DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Update "{row.getValue('name')}" category</DialogTitle>
-                <DialogDescription></DialogDescription>
-              </DialogHeader>
-              <Form
-                method="POST"
-                navigate={false}
-                className=""
-              >
-                <div className="mb-3 grid gap-4">
-                  <Input
-                    placeholder="New Name"
-                    name="name"
-                  />
-                </div>
-                <DialogFooter className="flex items-center gap-3">
-                  <input
-                    type="hidden"
-                    name="actionMethod"
-                    value="update"
-                  />
-                  <input
-                    type="hidden"
-                    name="id"
-                    value={row.getValue('id')}
-                  />
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button type="submit">Update</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </Form>
-            </DialogContent>
-          </div>
-        </Dialog>
-        <Dialog>
-          <form>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => e.preventDefault()}
@@ -90,7 +48,7 @@ export function RemoveCategory({ row }: { row: Row<Category> }) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Remove "{row.getValue('name')}" category</DialogTitle>
+                <DialogTitle>Remove "{row.getValue('name')}" content</DialogTitle>
                 <DialogDescription>Are you sure?</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4"></div>
@@ -107,8 +65,8 @@ export function RemoveCategory({ row }: { row: Row<Category> }) {
                   />
                   <input
                     type="hidden"
-                    name="id"
-                    value={row.getValue('id')}
+                    name="name"
+                    value={row.getValue('name')}
                   />
                   <DialogClose asChild>
                     <Button variant="outline">No</Button>
@@ -119,7 +77,7 @@ export function RemoveCategory({ row }: { row: Row<Category> }) {
                 </Form>
               </DialogFooter>
             </DialogContent>
-          </form>
+          </div>
         </Dialog>
       </DropdownMenuContent>
     </DropdownMenu>

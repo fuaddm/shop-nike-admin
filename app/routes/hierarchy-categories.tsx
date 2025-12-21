@@ -122,7 +122,12 @@ export const subCategoriesColumns: ColumnDef<HierarchySubCategory>[] = [
 ];
 
 export async function clientLoader() {
-  const resp = await mainAPI.get('/admin/hierarchy-v2');
+  const token = sessionStorage.getItem('token');
+  const resp = await mainAPI.get('/admin/hierarchy-v2', {
+    headers: {
+      token,
+    },
+  });
 
   if (resp.statusText === 'OK') return resp.data.data.hierarchies;
 
@@ -133,8 +138,16 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
   const actionMethod = formData.get('actionMethod');
   const hierarchy_id = formData.get('hierarchy_id');
+  const id = formData.get('id');
+  const subCategoryName = formData.get('subCategoryName');
+  const token = sessionStorage.getItem('token');
 
-  if (actionMethod === 'remove') await mainAPI.patch(`/admin/delete-hierarchy?hierarchyId=${hierarchy_id}`, null);
+  if (actionMethod === 'update')
+    await mainAPI.put(`/admin/update-sub-category?subCategoryId=${id}&name=${subCategoryName}`, null, {
+      headers: { token },
+    });
+  if (actionMethod === 'remove')
+    await mainAPI.patch(`/admin/delete-hierarchy?hierarchyId=${hierarchy_id}`, null, { headers: { token } });
 
   return [];
 }

@@ -20,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { Input } from '~/components/ui/input';
 import { MultiSelect } from '~/components/ui/multi-select';
 import type { MainCategory } from '~/routes/main-categories';
 import type { SubCategory } from '~/routes/sub-categories';
@@ -43,6 +44,49 @@ export function ActionsSubCategory({ row, mainCategories }: { row: Row<SubCatego
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <Dialog>
+          <div>
+            <DialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Update</DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Update "{row.getValue('name')}" sub category</DialogTitle>
+                <DialogDescription></DialogDescription>
+              </DialogHeader>
+              <Form
+                method="POST"
+                navigate={false}
+                className=""
+              >
+                <div className="mb-3 grid gap-4">
+                  <Input
+                    placeholder="New Name"
+                    name="name"
+                  />
+                </div>
+                <DialogFooter className="flex items-center gap-3">
+                  <input
+                    type="hidden"
+                    name="actionMethod"
+                    value="update"
+                  />
+                  <input
+                    type="hidden"
+                    name="id"
+                    value={row.getValue('id')}
+                  />
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button type="submit">Update</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </Form>
+            </DialogContent>
+          </div>
+        </Dialog>
         <Dialog>
           <DialogTrigger asChild>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Create hierarchy</DropdownMenuItem>

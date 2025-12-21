@@ -4,6 +4,7 @@ import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import type { Route } from './+types/root';
 import './app.css';
 import { DashboardLayout } from '~/components/layout/DashboardLayout';
+import { Toaster } from 'sonner';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -31,7 +32,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <DashboardLayout>{children}</DashboardLayout>
+        {children}
+        <Toaster
+          richColors
+          position="top-center"
+        />
         <ScrollRestoration />
         <Scripts />
       </body>
