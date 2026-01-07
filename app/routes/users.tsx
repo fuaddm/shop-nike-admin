@@ -44,7 +44,7 @@ export const columns: ColumnDef<unknown>[] = [
 export async function clientLoader() {
   try {
     const token = sessionStorage.getItem('token');
-    const resp = await mainAPI.get('/admin/get-all-users?pageNumber=1&pageSize=24', {
+    const resp = await mainAPI.get('/admin/users?pageNumber=1&pageSize=24', {
       headers: {
         token,
       },
@@ -60,7 +60,6 @@ export async function clientLoader() {
 
 export default function Users({ loaderData }: Route.ComponentProps) {
   const data = loaderData.items;
-  console.log(data);
 
   return (
     <div className="px-6 py-10">
