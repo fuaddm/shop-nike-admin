@@ -3,7 +3,6 @@ import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 
 import type { Route } from './+types/root';
 import './app.css';
-import { DashboardLayout } from '~/components/layout/DashboardLayout';
 import { Toaster } from 'sonner';
 
 export const links: Route.LinksFunction = () => [

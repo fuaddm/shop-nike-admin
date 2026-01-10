@@ -41,7 +41,6 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
   const actionMethod = formData.get('actionMethod');
-  console.log(Array.from(formData.entries()));
   let sizeQuantities = JSON.parse(formData.get('sizeQuantities') as string);
   const token = sessionStorage.getItem('token');
 
@@ -185,8 +184,6 @@ export const columns: ColumnDef<Product>[] = [
 ];
 
 export default function Products({ loaderData }: Route.ComponentProps) {
-  console.log(loaderData[0]);
-
   return (
     <div className="px-6 py-10">
       <div className="mb-8 flex items-center justify-between">

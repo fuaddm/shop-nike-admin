@@ -1,9 +1,13 @@
-import { useFetcher } from 'react-router';
+// app/components/login-otp.tsx
+import type { FetcherWithComponents } from 'react-router';
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '~/components/ui/input-otp';
+import type { ActionResult } from '~/routes/login'; // adjust path if needed
 
-export function LoginOtp() {
-  const otpFetcher = useFetcher({ key: 'otp' });
+type Props = {
+  fetcher: FetcherWithComponents<ActionResult>;
+};
 
+export function LoginOtp({ fetcher }: Props) {
   return (
     <div className="mx-auto w-fit py-10">
       <div className="w-full max-w-sm">
@@ -14,19 +18,17 @@ export function LoginOtp() {
 
         <div className="mb-4">
           <div className="mb-2 font-medium">Verification Code</div>
+
           <InputOTP
             name="otp"
-            disabled={otpFetcher.state !== 'idle'}
+            disabled={fetcher.state !== 'idle'}
+            maxLength={6}
             onComplete={(otp) => {
               const formData = new FormData();
               formData.append('otp', otp);
               formData.append('actionName', 'otpSubmit');
-              otpFetcher.submit(formData, {
-                method: 'post',
-                action: '/login',
-              });
+              fetcher.submit(formData, { method: 'post' });
             }}
-            maxLength={6}
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -40,8 +42,9 @@ export function LoginOtp() {
               <InputOTPSlot index={5} />
             </InputOTPGroup>
           </InputOTP>
-          {otpFetcher.data && !otpFetcher.data?.success && (
-            <p className="mt-4 text-center text-sm text-red-500">{otpFetcher.data?.errorMsg || 'Wrong OTP.'}</p>
+
+          {fetcher.data?.success === false && (
+            <p className="mt-4 text-center text-sm text-red-500">{fetcher.data.errorMsg}</p>
           )}
         </div>
       </div>

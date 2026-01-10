@@ -81,7 +81,6 @@ export function ActionsProduct({ row }: { row: Row<Product> }) {
   useEffect(() => {
     if (fetcher.data?.data?.data) {
       setDetails(fetcher.data?.data?.data);
-      console.log(fetcher.data?.data?.data);
     }
   }, [fetcher]);
 
