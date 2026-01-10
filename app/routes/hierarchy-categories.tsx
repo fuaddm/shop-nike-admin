@@ -207,6 +207,7 @@ export default function HierarchyCategories({ loaderData }: Route.ComponentProps
         <DataTable
           data={loaderData}
           columns={mainCategoriesColumns}
+          totalRows={loaderData.length}
         />
       )}
       <div className="mb-10"></div>
@@ -214,6 +215,7 @@ export default function HierarchyCategories({ loaderData }: Route.ComponentProps
         <DataTable
           data={getCategoriesByMainCategoryId()}
           columns={categoriesColumns}
+          totalRows={getCategoriesByMainCategoryId().length}
         />
       )}
       <div className="mb-10"></div>
@@ -221,6 +223,7 @@ export default function HierarchyCategories({ loaderData }: Route.ComponentProps
         <DataTable
           data={getSubCategoriesByCategoryId()}
           columns={subCategoriesColumns}
+          totalRows={getSubCategoriesByCategoryId().length}
         />
       )}
     </div>

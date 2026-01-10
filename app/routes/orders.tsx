@@ -78,15 +78,27 @@ export const columns: ColumnDef<unknown>[] = [
   },
 ];
 
-export async function clientLoader() {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const url = new URL(request.url);
+
   try {
+    const searchParams = new URLSearchParams({
+      pageNumber: url.searchParams.get('pageNumber') || '1',
+      pageSize: url.searchParams.get('pageSize') || '10',
+      emailSearch: url.searchParams.get('q') || '',
+      statusFilter: url.searchParams.get('statusFilter') || '',
+      startDate: url.searchParams.get('startDate') || '',
+      endDate: url.searchParams.get('endDate') || '',
+      sortBy: url.searchParams.get('sortBy') || '',
+    });
+
     const token = sessionStorage.getItem('token');
-    const resp = await mainAPI.get('/admin/orders', {
+    const resp = await mainAPI.get(`/admin/orders?${searchParams.toString()}`, {
       headers: {
         token,
       },
     });
-    if (resp.statusText === 'OK') return { items: resp.data.data.items };
+    if (resp.statusText === 'OK') return { items: resp.data.data.items, totalCount: resp.data.data.totalCount };
   } catch {
     return { items: [] };
   }
@@ -110,7 +122,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
 export default function Page({ loaderData }: Route.ComponentProps) {
   const data = loaderData.items;
-  console.log(data);
+  const totalRows = loaderData.totalCount;
 
   return (
     <div className="px-6 py-10">
@@ -121,6 +133,8 @@ export default function Page({ loaderData }: Route.ComponentProps) {
         <DataTable
           data={data}
           columns={columns}
+          totalRows={totalRows}
+          searchMode="server"
         />
       )}
     </div>

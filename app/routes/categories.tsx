@@ -75,6 +75,7 @@ export default function Categories({ loaderData }: Route.ComponentProps) {
       <DataTable
         data={loaderData}
         columns={columns}
+        totalRows={loaderData.length}
       />
     </div>
   );

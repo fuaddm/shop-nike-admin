@@ -1,17 +1,34 @@
 import type { Route } from '.react-router/types/app/routes/+types/products';
 import type { ColumnDef } from '@tanstack/react-table';
 import { mainAPI } from '~/api/config';
+import { DataTable } from '~/components/data-table';
 import { ActionsProduct } from '~/components/products/ActionsProduct';
 import { AddNewProduct } from '~/components/products/AddNewProduct';
-import { ProductDataTable } from '~/components/products/ProductDataTable';
 
-export async function clientLoader() {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const url = new URL(request.url);
+
+  const searchParams = {
+    mainCategoryId: url.searchParams.get('MainCategoryId'),
+    categoryId: url.searchParams.get('CategoryId'),
+    subCategoryId: url.searchParams.get('SubCategoryId'),
+    fabric: null,
+    keywords: null,
+    productName: url.searchParams.get('q'),
+    clothingGenderId: url.searchParams.getAll('ClothingGenderId'),
+    priceRangeId: url.searchParams.get('PriceRangeId'),
+    colorId: url.searchParams.getAll('ColorId'),
+    sortId: url.searchParams.get('SortId'),
+    pageNumber: url.searchParams.get('pageNumber') ?? 1,
+    pageSize: url.searchParams.get('pageSize') ?? 10,
+  };
+
   try {
     const token = sessionStorage.getItem('token');
     const subCategoriesResp = await mainAPI.get('/user/sub-categories', { headers: { token } });
     const mainCategoriesResp = await mainAPI.get('/user/main-categories', { headers: { token } });
     try {
-      const productsResp = await mainAPI.get('/user/products', { headers: { token } });
+      const productsResp = await mainAPI.post('/user/search', searchParams, { headers: { token } });
       return [productsResp.data.data, subCategoriesResp.data.data, mainCategoriesResp.data.data];
     } catch {
       return [[], subCategoriesResp.data.data, mainCategoriesResp.data.data];
@@ -176,9 +193,11 @@ export default function Products({ loaderData }: Route.ComponentProps) {
         <div className="text-3xl font-semibold">Products</div>
         <AddNewProduct data={[loaderData[1], loaderData[2]]} />
       </div>
-      <ProductDataTable
+      <DataTable
         columns={columns}
-        products={loaderData[0].items}
+        data={loaderData[0].items}
+        totalRows={loaderData[0].totalCount}
+        searchMode="server"
       />
     </div>
   );

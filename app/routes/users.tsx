@@ -41,10 +41,18 @@ export const columns: ColumnDef<unknown>[] = [
   },
 ];
 
-export async function clientLoader() {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const url = new URL(request.url);
+
   try {
+    const searchParams = new URLSearchParams({
+      pageNumber: url.searchParams.get('pageNumber') || '1',
+      pageSize: url.searchParams.get('pageSize') || '10',
+      emailSearch: url.searchParams.get('emailSearch') || '',
+      statusId: url.searchParams.get('statusId') || '',
+    });
     const token = sessionStorage.getItem('token');
-    const resp = await mainAPI.get('/admin/users?pageNumber=1&pageSize=24', {
+    const resp = await mainAPI.get(`/admin/users?${searchParams.toString()}`, {
       headers: {
         token,
       },
@@ -68,8 +76,9 @@ export default function Users({ loaderData }: Route.ComponentProps) {
       </div>
       {data && (
         <DataTable
-          data={data}
+          data={data.items}
           columns={columns}
+          totalRows={data.totalCount}
         />
       )}
     </div>

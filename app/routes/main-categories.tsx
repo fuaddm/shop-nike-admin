@@ -69,6 +69,7 @@ export default function MainCategories({ loaderData }: Route.ComponentProps) {
       <DataTable
         data={loaderData}
         columns={columns}
+        totalRows={loaderData.length}
       />
     </div>
   );

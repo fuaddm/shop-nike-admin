@@ -58,7 +58,6 @@ export async function clientLoader() {
         token,
       },
     });
-    console.log(resp.data);
     if (resp.statusText === 'OK') return { items: resp.data.data };
   } catch {
     return { items: [] };
@@ -68,18 +67,16 @@ export async function clientLoader() {
 }
 
 export default function Page({ loaderData }: Route.ComponentProps) {
-  const data = loaderData.items;
-  console.log(data);
-
   return (
     <div className="px-6 py-10">
       <div className="mb-8 flex items-center justify-between">
         <div className="text-3xl font-semibold">Promocodes</div>
       </div>
-      {data && (
+      {loaderData && (
         <DataTable
-          data={data}
+          data={loaderData.items.items}
           columns={columns}
+          totalRows={loaderData.items.totalCount}
         />
       )}
     </div>

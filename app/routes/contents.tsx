@@ -6,10 +6,15 @@ import { ActionsContent } from '~/components/contents/ActionsContent';
 import { DataTable } from '~/components/data-table';
 import { Button } from '~/components/ui/button';
 
-export async function clientLoader() {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const url = new URL(request.url);
+  const searchParams = new URLSearchParams({
+    pageNumber: url.searchParams.get('pageNumber') || '1',
+    pageSize: url.searchParams.get('pageSize') || '10',
+  });
   try {
     const token = sessionStorage.getItem('token');
-    const resp = await mainAPI.get('/help/contents', {
+    const resp = await mainAPI.get(`/help/contents?${searchParams.toString()}`, {
       headers: {
         token,
       },
@@ -72,8 +77,9 @@ export default function Contents({ loaderData }: Route.ComponentProps) {
         </Button>
       </div>
       <DataTable
-        data={loaderData}
+        data={loaderData.items}
         columns={columns}
+        totalRows={loaderData.totalCount}
       />
     </div>
   );
